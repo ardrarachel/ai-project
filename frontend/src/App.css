@@ -1,0 +1,26 @@
+/* Styles for the main application container */
+.app {
+  text-align: center;
+  padding: 20px;
+  background-color: #282c34;
+  min-height: 100vh;
+  color: white;
+}
+
+/* Flexbox layout to put the grid and sidebar next to each other */
+.main-content {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 30px;
+  margin-top: 20px;
+}
+
+/* Styles for the sidebar containing controls and stats */
+.sidebar {
+  width: 250px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}

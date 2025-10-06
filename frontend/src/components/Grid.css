@@ -1,0 +1,47 @@
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(10, 35px);
+    border: 2px solid #61dafb;
+}
+
+.grid-row {
+    display: contents;
+}
+
+.grid-cell {
+    width: 35px;
+    height: 35px;
+    border: 1px solid #444;
+    position: relative; /* <-- THIS WAS THE MISSING LINE */
+}
+
+/* Cell types */
+.road { background-color: #5a5a5a; }
+.obstacle { background-color: #1c1c1c; }
+.start { background-color: #007bff; }
+.goal { background-color: #8a2be2; }
+.traffic-light { background-color: #ff0000; }
+
+.car {
+    width: 60%;
+    height: 60%;
+    background-color: #ff9900;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+}
+
+.path-marker {
+    width: 30%;
+    height: 30%;
+    background-color: rgba(255, 255, 0, 0.7);
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+}

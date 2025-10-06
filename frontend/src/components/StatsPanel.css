@@ -1,0 +1,17 @@
+/* src/components/StatsPanel.css */
+.stats-panel {
+    background-color: #3c4049;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: left;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.stats-grid span:nth-child(odd) {
+    font-weight: bold;
+}

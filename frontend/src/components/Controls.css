@@ -1,0 +1,28 @@
+/* src/components/Controls.css */
+.controls-panel {
+    background-color: #3c4049;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: left;
+}
+
+.button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.button-group button {
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #61dafb;
+    color: black;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.button-group button:hover {
+    background-color: #ffffff;
+}
