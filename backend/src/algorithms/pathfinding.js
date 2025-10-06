@@ -1,70 +1,116 @@
-// This helper function reconstructs the path by tracing back from the goal
-function reconstructPath(cameFrom, start, goal) {
+// A simple Priority Queue implementation for UCS and A*
+class PriorityQueue {
+    constructor() { this.elements = []; }
+    enqueue(element, priority) {
+        this.elements.push({ element, priority });
+        this.elements.sort((a, b) => a.priority - b.priority);
+    }
+    dequeue() { return this.elements.shift().element; }
+    isEmpty() { return this.elements.length === 0; }
+}
+
+function getNeighbors(grid, node) {
+    const neighbors = [];
+    const { row, col } = node;
+    const directions = [{ r: -1, c: 0 }, { r: 1, c: 0 }, { r: 0, c: -1 }, { r: 0, c: 1 }];
+    for (const dir of directions) {
+        const newRow = row + dir.r;
+        const newCol = col + dir.c;
+        if (newRow >= 0 && newRow < grid.length && newCol >= 0 && newCol < grid[0].length && grid[newRow][newCol] !== 1) {
+            neighbors.push({ row: newRow, col: newCol });
+        }
+    }
+    return neighbors;
+}
+
+function reconstructPath(cameFrom, goal) {
     let current = goal;
     const path = [];
-    while (current.row !== start.row || current.col !== start.col) {
+    while (current) {
         path.push(current);
         current = cameFrom[`${current.row},${current.col}`];
     }
-    path.push(start);
-    return path.reverse(); // Reverse to get path from start to goal
+    return path.reverse();
 }
 
-/**
- * A complete Breadth-First Search (BFS) implementation.
- * It explores the grid layer by layer to find the shortest path in terms of steps.
- */
+function manhattanDistance(a, b) {
+    return Math.abs(a.row - b.row) + Math.abs(a.col - b.col);
+}
+
+// --- BREADTH-FIRST SEARCH (BFS) ---
 export function bfs(grid, start, goal) {
-    const queue = [start]; // A queue of nodes to visit
-    const cameFrom = { [`${start.row},${start.col}`]: null }; // To track the path
+    const queue = [start];
+    const cameFrom = { [`${start.row},${start.col}`]: null };
     let nodesExplored = 0;
-
     while (queue.length > 0) {
-        const current = queue.shift(); // Get the first node in the queue
+        const current = queue.shift();
         nodesExplored++;
-
         if (current.row === goal.row && current.col === goal.col) {
-            // Goal reached! Reconstruct and return the path.
-            const path = reconstructPath(cameFrom, start, goal);
-            const stats = { name: 'BFS', cost: path.length - 1, explored: nodesExplored };
-            return { path, stats };
+            const path = reconstructPath(cameFrom, goal);
+            return { path, stats: { name: 'BFS', cost: path.length - 1, explored: nodesExplored } };
         }
-
-        // Check all neighbors (up, down, left, right)
-        const neighbors = [
-            { row: current.row - 1, col: current.col },
-            { row: current.row + 1, col: current.col },
-            { row: current.row, col: current.col - 1 },
-            { row: current.row, col: current.col + 1 },
-        ];
-
-        for (const neighbor of neighbors) {
+        for (const neighbor of getNeighbors(grid, current)) {
             const neighborId = `${neighbor.row},${neighbor.col}`;
-
-            // Check if the neighbor is valid and has not been visited
-            if (
-                neighbor.row >= 0 && neighbor.row < grid.length && // Inside grid vertically
-                neighbor.col >= 0 && neighbor.col < grid[0].length && // Inside grid horizontally
-                grid[neighbor.row][neighbor.col] !== 1 && // Not an obstacle
-                !cameFrom[neighborId] // Not already visited
-            ) {
-                cameFrom[neighborId] = current; // Remember the path
-                queue.push(neighbor); // Add neighbor to the queue to visit later
+            if (cameFrom[neighborId] === undefined) {
+                cameFrom[neighborId] = current;
+                queue.push(neighbor);
             }
         }
     }
-
-    // If the queue becomes empty and goal was not found
     return { path: null, stats: { name: 'BFS', explored: nodesExplored, cost: -1 } };
 }
 
-// --- Stubs for other algorithms (we can implement these next) ---
+// --- UNIFORM COST SEARCH (UCS) ---
 export function ucs(grid, start, goal) {
-    console.log("UCS algorithm called (not implemented yet).");
-    return { path: [start, goal], stats: { name: 'UCS', cost: 1, explored: 2 } };
+    const frontier = new PriorityQueue();
+    frontier.enqueue(start, 0);
+    const cameFrom = { [`${start.row},${start.col}`]: null };
+    const costSoFar = { [`${start.row},${start.col}`]: 0 };
+    let nodesExplored = 0;
+    while (!frontier.isEmpty()) {
+        const current = frontier.dequeue();
+        nodesExplored++;
+        if (current.row === goal.row && current.col === goal.col) {
+            const path = reconstructPath(cameFrom, goal);
+            return { path, stats: { name: 'UCS', cost: costSoFar[`${current.row},${current.col}`], explored: nodesExplored } };
+        }
+        for (const neighbor of getNeighbors(grid, current)) {
+            const newCost = costSoFar[`${current.row},${current.col}`] + 1; // Cost of 1 per step
+            const neighborId = `${neighbor.row},${neighbor.col}`;
+            if (costSoFar[neighborId] === undefined || newCost < costSoFar[neighborId]) {
+                costSoFar[neighborId] = newCost;
+                frontier.enqueue(neighbor, newCost);
+                cameFrom[neighborId] = current;
+            }
+        }
+    }
+    return { path: null, stats: { name: 'UCS', explored: nodesExplored, cost: -1 } };
 }
 
+// --- A* SEARCH ---
 export function aStar(grid, start, goal) {
-    console.log("A* algorithm called (not implemented yet).");
-    return { path: [start, goal], stats: { name: 'A*', cost: 1, explored: 2 } };
+    const frontier = new PriorityQueue();
+    frontier.enqueue(start, 0);
+    const cameFrom = { [`${start.row},${start.col}`]: null };
+    const costSoFar = { [`${start.row},${start.col}`]: 0 };
+    let nodesExplored = 0;
+    while (!frontier.isEmpty()) {
+        const current = frontier.dequeue();
+        nodesExplored++;
+        if (current.row === goal.row && current.col === goal.col) {
+            const path = reconstructPath(cameFrom, goal);
+            return { path, stats: { name: 'A*', cost: costSoFar[`${current.row},${current.col}`], explored: nodesExplored } };
+        }
+        for (const neighbor of getNeighbors(grid, current)) {
+            const newCost = costSoFar[`${current.row},${current.col}`] + 1;
+            const neighborId = `${neighbor.row},${neighbor.col}`;
+            if (costSoFar[neighborId] === undefined || newCost < costSoFar[neighborId]) {
+                costSoFar[neighborId] = newCost;
+                const priority = newCost + manhattanDistance(neighbor, goal);
+                frontier.enqueue(neighbor, priority);
+                cameFrom[neighborId] = current;
+            }
+        }
+    }
+    return { path: null, stats: { name: 'A*', explored: nodesExplored, cost: -1 } };
 }
