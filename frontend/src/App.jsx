@@ -104,20 +104,28 @@ function App() {
     // --- RENDER LOGIC ---
     if (gameState === 'menu') {
         return (
-            <div className="app">
+            // This is the DIV that gets the background class
+            <div className={`app ${gameState === 'menu' ? 'menu-background' : ''}`}>
                 <div className="menu">
                     <h1>AI Pathfinding Simulation</h1>
-                    <button className="game-button start-button" onClick={loadNewGrid}>Start Simulation</button>
+                    <button className="game-button start-button" onClick={loadNewGrid}>
+                        Start Simulation
+                    </button>
                 </div>
             </div>
         );
     }
 
     if (gameState === 'loading' || !gridData) {
-        return <div className="app"><div className="game-status">Generating New Level...</div></div>;
+        return (
+            <div className="app">
+                <div className="game-status">Generating New Level...</div>
+            </div>
+        );
     }
-    
+
     return (
+        // This is the main DIV for the simulation screen
         <div className="app">
             <div className="main-content">
                 <Grid grid={gridData.layout} carPos={carPos} path={path} trafficLightState={trafficLightState} />

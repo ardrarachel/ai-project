@@ -1,54 +1,86 @@
 .grid-container {
     display: grid;
-    grid-template-columns: repeat(10, 35px);
-    border: 2px solid #61dafb;
-}
-
-.grid-row {
-    display: contents;
+    /* --- GLOW EFFECT --- */
+    /* Removed the old border and added a glowing box-shadow */
+    box-shadow: 0 0 25px rgba(100, 255, 218, 0.5), 0 0 10px rgba(100, 255, 218, 0.3) inset;
+    border-radius: 10px; /* Softens the corners */
+    padding: 5px; /* Adds a little space for the glow */
+    background-color: #0A192F;
 }
 
 .grid-cell {
-    width: 35px;
-    height: 35px;
-    border: 1px solid #444;
-    position: relative; /* <-- THIS WAS THE MISSING LINE */
+    width: 30px;
+    height: 30px;
+    /* --- SOFTER BORDERS --- */
+    /* Made borders thinner and semi-transparent to blend in */
+    border: 1px solid rgba(23, 92, 77, 0.305);
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-/* Cell types */
-.road { background-color: #5a5a5a; }
-.obstacle { background-color: #1c1c1c; }
-.start { background-color: #007bff; }
-.goal { background-color: #8a2be2; }
-.traffic-light { background-color: #ff0000; }
+/* --- IMPROVED CELL STYLES --- */
+.road { background-color: transparent; } /* Transparent to show the container background */
+
+.obstacle { 
+    background-color: #112240; /* A darker navy instead of pure black */
+    /* Adds a subtle crosshatch pattern */
+    background-image: linear-gradient(45deg, rgba(0,0,0,0.2) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.2) 75%),
+                      linear-gradient(45deg, rgba(0,0,0,0.2) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.2) 75%);
+    background-size: 10px 10px;
+    background-position: 0 0, 5px 5px;
+}
+
+.start { 
+    background-color: #007bff;
+    /* Adds a soft blue glow */
+    box-shadow: 0 0 15px rgba(0, 123, 255, 0.7);
+}
+
+.goal { 
+    background-color: #8a2be2;
+    /* Adds a soft purple glow */
+    box-shadow: 0 0 15px rgba(138, 43, 226, 0.7);
+}
+
+.traffic-light.red { background-color: #b9180f; }
+.traffic-light.green { background-color: #189426; }
 
 .car {
-    font-size: 20px; /* Adjust size as needed */
+    font-size: 20px;
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 2;
-    /* The transition is no longer needed */
+    /* Adds a drop shadow to lift the car emoji off the grid */
+    filter: drop-shadow(0 0 3px black);
 }
 
+/* --- PULSING PATH MARKERS --- */
 .path-marker {
     width: 30%;
     height: 30%;
     background-color: rgba(255, 255, 0, 0.7);
     border-radius: 50%;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
     z-index: 1;
-}
-/* Add these two rules to your Grid.css file */
-
-.traffic-light.red {
-    background-color: #ff4136; /* A nice shade of red */
+    /* Applies the pulsing animation */
+    animation: pulse 2s infinite ease-in-out;
 }
 
-.traffic-light.green {
-    background-color: #2ecc40; /* A vibrant green */
+/* Keyframe animation for the pulse effect */
+@keyframes pulse {
+    0% {
+        transform: scale(0.8);
+        opacity: 0.7;
+    }
+    50% {
+        transform: scale(1.2);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0.8);
+        opacity: 0.7;
+    }
 }

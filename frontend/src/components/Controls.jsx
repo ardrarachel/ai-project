@@ -12,8 +12,8 @@ const Controls = ({ onRun, onReset, isAnimating }) => (
         </div>
         <hr />
         <button className="reset-button" onClick={onReset} disabled={isAnimating}>
-            Reset Grid
-        </button>
+    Reset Grid
+</button>
     </div>
 );
 

@@ -1,10 +1,20 @@
 /* Styles for the main application container */
 .app {
-  text-align: center;
-  padding: 20px;
-  background-color: #282c34;
-  min-height: 100vh;
-  color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    text-align: center;
+    
+    /* This sets the background for the simulation page */
+    background-image: linear-gradient(rgba(112, 132, 162, 0.9), rgba(10, 25, 47, 0.9)), url('/background-game.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed; /* This makes the background stay in place */
+
+    color: #CCD6F6;
+    transition: background-image 0.5s ease-in-out;
 }
 
 /* Flexbox layout to put the grid and sidebar next to each other */
@@ -23,4 +33,28 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
+}
+
+.start-button {
+    font-size: 1.5em;
+    padding: 20px 40px;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    background: linear-gradient(45deg, #64FFDA, #00C7FF);
+    box-shadow: 0 0 20px rgba(53, 90, 81, 0.4);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Poppins', sans-serif;
+}
+
+.app.menu-background {
+    /* Make sure your image name in the /public folder matches 'background.jpg' */
+    background-image: linear-gradient(rgba(19, 38, 67, 0.85), rgba(10, 25, 47, 0.85)), url('/background.jpg');
+    background-size: cover;
+    background-position: center;
+}
+.start-button:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 35px rgba(30, 80, 68, 0.7);
 }
