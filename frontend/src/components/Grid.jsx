@@ -36,7 +36,7 @@ const Grid = ({ grid, carPos, path, trafficLightState }) => {
                         return (
                             <div key={colIndex} className={cellClassName}>
                                 {isPath && <div className="path-marker"></div>}
-                                {isCarHere && <div className="car"></div>}
+                                {isCarHere && <div className="car">🚗</div>}
                             </div>
                         );
                     })}

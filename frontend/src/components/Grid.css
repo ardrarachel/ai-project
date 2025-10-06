@@ -23,15 +23,13 @@
 .traffic-light { background-color: #ff0000; }
 
 .car {
-    width: 60%;
-    height: 60%;
-    background-color: #ff9900;
-    border-radius: 50%;
+    font-size: 20px; /* Adjust size as needed */
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 2;
+    /* The transition is no longer needed */
 }
 
 .path-marker {
