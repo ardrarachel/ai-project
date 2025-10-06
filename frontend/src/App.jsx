@@ -17,12 +17,12 @@ function App() {
     const [isAnimating, setIsAnimating] = useState(false);
     const [trafficLightState, setTrafficLightState] = useState('red');
 
-    // Refs for stable animation state
+    // --- REFS FOR STABLE ANIMATION ---
     const animationIntervalRef = useRef(null);
     const stepRef = useRef(0);
     const trafficLightStateRef = useRef(trafficLightState);
 
-    // Keep the traffic light ref updated
+    // Keep the traffic light ref updated with the latest state
     useEffect(() => {
         trafficLightStateRef.current = trafficLightState;
     }, [trafficLightState]);
@@ -48,7 +48,7 @@ function App() {
                 grid: gridData.layout, algorithm, startPos: gridData.startPos, goalPos: gridData.goalPos
             });
             setStats(response.data.stats || {});
-            setPath(response.data.path || []); // Setting the path triggers the animation useEffect
+            setPath(response.data.path || []);
         } catch (error) { console.error("Error calculating path:", error); }
     };
 
@@ -56,58 +56,52 @@ function App() {
     useEffect(() => {
         const timer = setInterval(() => {
             setTrafficLightState(prevState => (prevState === 'red' ? 'green' : 'red'));
-        }, 2000); // 2 second cycle
+        }, 2000);
         return () => clearInterval(timer);
     }, []);
 
-    // --- FINAL AND CORRECTED ANIMATION LOGIC ---
+    // --- FINAL, ROBUST ANIMATION LOGIC ---
     useEffect(() => {
-        // Always stop any previous animation when this effect runs
-        if (animationIntervalRef.current) {
-            clearInterval(animationIntervalRef.current);
-        }
-
-        if (!path || path.length === 0) {
-            setIsAnimating(false);
-            return;
-        }
-
-        setIsAnimating(true);
-        stepRef.current = 0;
-        setCarPos(path[0]);
-
-        animationIntervalRef.current = setInterval(() => {
-            const currentStep = stepRef.current;
-            
-            if (currentStep + 1 >= path.length) {
-                clearInterval(animationIntervalRef.current);
-                setIsAnimating(false);
-                return;
-            }
-            
-            const nextPos = path[currentStep + 1];
-            const nextCellType = gridData.layout[nextPos.row][nextPos.col];
-
-            // Check the current light color using the ref
-            if (nextCellType === 4 && trafficLightStateRef.current === 'red') {
-                return; // PAUSE if the next step is a red light
-            }
-            
-            // If the light is green or it's not a light, proceed
-            stepRef.current += 1;
-            setCarPos(path[stepRef.current]);
-
-        }, 200); // Animation speed
-
-        // Cleanup function
-        return () => {
+        const stopAnimation = () => {
             if (animationIntervalRef.current) {
                 clearInterval(animationIntervalRef.current);
+                animationIntervalRef.current = null;
+                setIsAnimating(false);
             }
         };
+
+        if (path && path.length > 0) {
+            setIsAnimating(true);
+            stepRef.current = 0;
+            setCarPos(path[0]);
+
+            animationIntervalRef.current = setInterval(() => {
+                const currentStep = stepRef.current;
+
+                if (currentStep + 1 >= path.length) {
+                    stopAnimation();
+                    return;
+                }
+
+                const nextPos = path[currentStep + 1];
+                const nextCellType = gridData.layout[nextPos.row][nextPos.col];
+                
+                // Read the LIVE traffic light color from the ref
+                if (nextCellType === 4 && trafficLightStateRef.current === 'red') {
+                    return; // Pause
+                }
+
+                stepRef.current += 1;
+                setCarPos(path[stepRef.current]); // Move
+            }, 200);
+        } else {
+            stopAnimation();
+        }
+
+        return () => stopAnimation();
     }, [path]); // This effect now ONLY runs when a new path is set
 
-    // --- RENDER LOGIC (No changes below) ---
+    // --- RENDER LOGIC ---
     if (gameState === 'menu') {
         return (
             <div className="app">
@@ -118,9 +112,11 @@ function App() {
             </div>
         );
     }
+
     if (gameState === 'loading' || !gridData) {
         return <div className="app"><div className="game-status">Generating New Level...</div></div>;
     }
+    
     return (
         <div className="app">
             <div className="main-content">

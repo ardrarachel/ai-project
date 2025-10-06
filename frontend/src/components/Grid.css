@@ -45,3 +45,12 @@
     transform: translate(-50%, -50%);
     z-index: 1;
 }
+/* Add these two rules to your Grid.css file */
+
+.traffic-light.red {
+    background-color: #ff4136; /* A nice shade of red */
+}
+
+.traffic-light.green {
+    background-color: #2ecc40; /* A vibrant green */
+}
